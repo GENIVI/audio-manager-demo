@@ -1,0 +1,16 @@
+Audio Manager Monitor
+=====================
+
+Author: JoonCheol Park <jooncheol.park@windriver.com>
+        Daewon Park <daewon.park@windriver.com>
+
+Build Instruction
+=================
+
+[build on Ubuntu 14.04]
+  $ qtchooser -run-tool=qmake -qt=qt5 INCLUDEPATH=$PREFIX-OF-AM/include
+  $ make
+
+[Run on Ubuntu 14.04]
+  $ . pc-env # for testing audio environment
+  $ ./AudioManagerMonitor

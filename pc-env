@@ -1,0 +1,22 @@
+OLDPS1=$PS1
+PS1="(AM-Monitor Testing) "
+
+function deactivate () {
+	echo "unload alsa primary"
+	pactl unload-module $MOD_SINKP
+	echo "unload alsa secondary"
+	pactl unload-module $MOD_SINKS
+	PS1=$OLDPS1
+}
+
+MOD_SINKP=`pactl load-module module-remap-sink sink_name="AlsaPrimary"`
+MOD_SINKS=`pactl load-module module-remap-sink sink_name="AlsaSecondary"`
+
+
+pacmd list-sinks
+#pacmd list-sink-inputs
+#pacmd list-sources
+#pacmd list-source-outputs
+
+echo "2 sink remapped"
+echo "(Run 'deactivate' to finish testing env)"

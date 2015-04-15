@@ -1,0 +1,24 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>Button.qml</file>
+        <file>audio/car_reverse.wav</file>
+        <file>audio/navigation.wav</file>
+        <file>audio/telephone-ring.wav</file>
+        <file>audio/tts.wav</file>
+        <file>audio/media.wav</file>
+        <file>images/icon_car.png</file>
+        <file>images/icon_music.png</file>
+        <file>images/icon_reply.png</file>
+        <file>images/icon_microphone.png</file>
+        <file>images/icon_phone.png</file>
+		<file>images/speaker.png</file>
+		<file>images/volume-up.png</file>
+		<file>images/windriver-logo.png</file>
+		<file>images/genivi-logo.png</file>
+		<file>images/pulseaudio-logo.png</file>
+        <file>Graph.qml</file>
+        <file>Diagram.qml</file>
+	<file>code.js</file>
+    </qresource>
+</RCC>
