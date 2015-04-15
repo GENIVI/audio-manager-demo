@@ -14,7 +14,6 @@ RESOURCES += qml.qrc
 QML_IMPORT_PATH =
 
 # Default rules for deployment.
-include(deployment.pri)
 
 FORMS +=
 
@@ -32,5 +31,6 @@ HEADERS += \
 PKGCONFIG += libpulse
 
 
-DISTFILES += \
-    commandlist.txt
+#DISTFILES +=
+target.path = /usr/bin
+INSTALLS += target
