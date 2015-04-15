@@ -550,7 +550,7 @@ Item {
 		var ctx = getContext('2d');
 		// sink devices
 		var tw = this.w*3/4
-		var th = this.h/8
+		var th = this.h/9
 		var tx = this.x + (this.w - tw)/2;
 		var ty = this.y + this.h*2/7;
 		var sinkJCX = tx;
