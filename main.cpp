@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
         view.rootObject()->setWidth(size.width());
         view.rootObject()->setHeight(size.height());
         view.resize(size);
+        view.show();
     } else if(app.arguments().contains("--help")) {
         qCritical() << "Usage: ";
         qCritical() << " " << app.arguments().at(0) << " [Options]";
@@ -45,12 +46,11 @@ int main(int argc, char *argv[])
         return 1;
     }else {
         view.setSource(QUrl("qrc:///main.qml"));
-        view.showFullScreen();
         QSize size = app.primaryScreen()->size();
         view.rootObject()->setWidth(size.width());
         view.rootObject()->setHeight(size.height());
+        view.showFullScreen();
     }
-    view.show();
 
     return app.exec();
 }
