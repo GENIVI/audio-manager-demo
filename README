@@ -32,11 +32,12 @@ Build Instruction for Ubuntu 14.04 PC
  $ curl "http://git.projects.genivi.org/?p=meta-genivi-demo.git;a=blob_plain;f=recipes-multimedia/audiomanager/audiomanager/0001-Porting-Pulse-Routing-Interface-from-AM-v1.x-to-AM-v.patch;h=7d6ebbf710d0a0d46d99797f5ef6dd3712a888fe;hb=HEAD" > 0001-Porting-Pulse-Routing-Interface-from-AM-v1.x-to-AM-v.patch
  $ curl "http://git.projects.genivi.org/?p=meta-genivi-demo.git;a=blob_plain;f=recipes-multimedia/audiomanager/audiomanager/0001-Porting-Pulse-Control-Interface-from-AM-v1.x-to-AM-v.patch;hb=HEAD" > 0001-Porting-Pulse-Control-Interface-from-AM-v1.x-to-AM-v.patch
  $ cd AudioManager
+ $ git checkout Intreprid_stable_branch
  $ patch -p1 < ../0001-Porting-Pulse-Routing-Interface-from-AM-v1.x-to-AM-v.patch
  $ patch -p1 < ../0001-Porting-Pulse-Control-Interface-from-AM-v1.x-to-AM-v.patch
  $ mkdir build
  $ cd build
- $ cmake -DWITH_PULSE_ROUTING_PLUGIN=ON -DWITH_PULSE_CONTROL_PLUGIN=ON -DWITH_ENABLED_IPC=DBUS -DWITH_DATABASE_STORAGE=ON -DWITH_DLT=OFF -DCMAKE_INSTALL_PREFIX=(PREFIX on your dev environment) ..
+ $ cmake -DWITH_PULSE_ROUTING_PLUGIN=ON -DWITH_PULSE_CONTROL_PLUGIN=ON -DWITH_ENABLED_IPC=DBUS -DWITH_DATABASE_STORAGE=OFF -DWITH_DLT=OFF -DCMAKE_INSTALL_PREFIX=(PREFIX on your dev environment) ..
  $ make
  $ make install
 
