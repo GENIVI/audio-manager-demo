@@ -1,7 +1,7 @@
 TEMPLATE = app
 
 QT += qml quick dbus
-CONFIG += link_pkgconfig
+CONFIG += link_pkgconfig resources_big
 
 CONFIG += c++11
 SOURCES += main.cpp \
