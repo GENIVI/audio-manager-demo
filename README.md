@@ -45,6 +45,19 @@
     $ qmake INCLUDEPATH=(PREFIX-OF-AM)/include
     $ make
 
+ If you have a trouble with the compile due to not enough memory (e.g. build on VMWare), You can comment out the line "RESOURCES += qml.qrc" from AudioManager.pro. The executable binary won't have big resouce files in it.
+
+    $ vi AudioManagerMonitor.pro # comment out line "RESOURCES += qml.qrc"
+    $ qmake && make
+    $ ./AudioManagerMonitor --debug # run with --debug to load resources directly from filesystem.
+
+ Or you can add swap file temporarily for enough memory space for build on VM.
+
+    $ dd if=/dev/zero of=/swapfile bs=1K count=2000000 # 2G, you can try more
+    $ mkswap /swapfile
+    $ swapon /swapfile
+    $ # if you want to use this for next boot, add "/swapfile none swap sw 0 0" in /etc/fstab and reboot
+
 ---
 ## Running AM Monitor on Ubuntu 14.04 PC
 
