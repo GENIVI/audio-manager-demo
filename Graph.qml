@@ -3,7 +3,6 @@ import com.windriver.ammonitor 1.0
 import "code.js" as Code
 
 Rectangle {
-
     property string title : "No name"
     property string description : "No description"
     property string backgroundColor : "#F0F0F0"
@@ -15,18 +14,37 @@ Rectangle {
     property int maxDataLength : 100
     property int maxValue : 100
     property int graphLineWidth : 1
+    property int type : 0
+    property var graph : null
+    property var graphInfo : ({})
 
     Component.onCompleted: {
-        Code.addGraphDataset(graphName,refreshInterval);
+        graph = new Code.Graph(type);
         refreshTimer.start();
     }
 
+    function getGraphNodeColor(nodeName) {
+        return graph.getGraphNodeColor(nodeName);
+    }
+
     function updateData(name, id, value) {
-        Code.updateGraphNode(graphName, name, id, maxDataLength, value);
+        var index = graph.checkGraphNodeInList(name, id);
+        if (index < 0) {
+            console.log("Try to add graphNode(name: " + name + ", id: " + id + " )");
+            graph.addGraphNode(name, id, maxDataLength, value);
+            return;
+        }
+
+        graph.updateGraphNode(index, value);
     }
 
     function removeData(name, id) {
-        Code.removeGraphNode(graphName, name, id);
+        var index = graph.checkGraphNodeInList(name, id);
+        if (index < 0)
+            return;
+
+        console.log("Try to remove graphNode(name: " + name + ", id: " + id + " )");
+        graph.removeGraphNode(index);
     }
 
     function startTimer() {
@@ -37,25 +55,24 @@ Rectangle {
         refreshTimer.stop();
     }
 
-
     Text {
         text: title
         font.pixelSize: parent.height / 20
-        anchors.bottom: background.top
-        anchors.left: background.left
+        anchors.bottom: canvas.top
+        anchors.left:  canvas.left
     }
 
     Text {
         text: maxValue
         font.pixelSize: parent.height / 30
-        anchors.right: background.left
+        anchors.right: canvas.left
         anchors.rightMargin: 5
         y: parent.height * 0.25
     }
     Text {
         text: maxValue / 2
         font.pixelSize: parent.height / 30
-        anchors.right: background.left
+        anchors.right: canvas.left
         anchors.verticalCenter: parent.verticalCenter
         anchors.rightMargin: 5
         y: parent.height * 0.5
@@ -64,7 +81,7 @@ Rectangle {
         id: volume0
         text: "0"
         font.pixelSize: parent.height / 30
-        anchors.right: background.left
+        anchors.right: canvas.left
         anchors.rightMargin: 5
         y: parent.height * 0.70
     }
@@ -72,175 +89,50 @@ Rectangle {
     Text {
         text: "Volume"
         font.pixelSize: parent.height / 30
-        anchors.right: background.left
+        anchors.right: canvas.left
         anchors.rightMargin: 2
         anchors.top: volume0.bottom
     }
 
     Canvas {
-        id: background
+        id: canvas
         width: parent.width
         height: parent.height
         anchors.fill: parent
         anchors.margins: parent.width / 10
         antialiasing: true
 
-        function drawBackground() {
-            // Get Drawing Context
-            var context = getContext('2d');
-	    context.clearRect(0, 0, width, height);
-            var bgColor = parent.backgroundColor;
-            var bgLineColor = parent.backgroundLineColor;
-            var bgLineWidth = parent.backgroundLineWidth;
+        signal refreshGraphNode();
 
-            // Fill background color
-            context.save();
-            /*
-            context.beginPath();
-            context.fillStyle = bgColor;
-            context.fillRect(0,0,width, height);
-            context.closePath();
-            context.fill();
-            */
+        Component.onCompleted: {
+            graphInfo.width = width + 91;
+            graphInfo.height = height - 22;
+            graphInfo.maxDataLength = parent.maxDataLength;
+            graphInfo.lineWidth = parent.graphLineWidth;
+            graphInfo.maxValue = parent.maxValue;
+            graphInfo.backgroundColor = parent.backgroundColor;
+            graphInfo.backgroundLineColor = parent.backgroundLineColor;
+            graphInfo.backgroundLineWidth = parent.backgroundLineWidth;
 
-            // Draw Guide Line
-
-            context.translate(0.8,0.8);
-            var horizontalWidth = width / 10;
-            var verticalWidth = height / 10;
-
-            for(var i = 0; i < 10; i++) {
-                if(i==0)
-                    continue
-                // Draw Horizontal Line
-                context.beginPath();
-                context.lineWidth = bgLineWidth;
-                context.strokeStyle = bgLineColor;
-                context.moveTo(0, verticalWidth * i);
-                context.lineTo(width-1, verticalWidth * i);
-                context.closePath();
-                context.stroke();
-
-                // Draw Vertical Line
-                context.moveTo(horizontalWidth * i, 0);
-                context.lineTo(horizontalWidth * i, height);
-
-                // Stroke!!
-                context.stroke();
-            }
-
-            // Draw Right, Bottom border line
-
-            context.translate(-0.8, -0.8);
-            var w = width -1;
-            var h = height -1;
-            context.beginPath();
-            context.strokeStyle = "black";
-            context.lineWidth = 1;
-            context.moveTo(0,0);
-            context.lineTo(0, height);
-            context.moveTo(0, verticalWidth * 8);
-            context.lineTo(width, verticalWidth * 8);
-            context.closePath();
-            context.stroke();
-
-            context.restore();
-
+            graph.loadGraphInfo(graphInfo);
         }
 
-        function drawGraphNode() {
-            var context = getContext('2d');
-            var graphWidth = width-2;
-            var graphHeight = height * (0.6);
-            var nodeList = Code.takeGraphDataset(graphName);
-            var lineColor = "black";
-            var dataDrawingWidth = graphWidth / maxDataLength;
+        onRefreshGraphNode: {
+            graph.refreshGraphNode();
+        }
 
-            if (nodeList.length == 0) {
+        onPaint: {
+            var context = canvas.getContext("2d");
+            context.reset();
+
+            if (graph == null) {
+                console.log("Error: Cannot create graph, " + graph.name);
                 return;
             }
 
-            context.lineWidth = graphLineWidth;
-
-            for (var i = 0; i < nodeList.length; i++) {
-                var node = nodeList[i];
-                var startX = width-1;
-                var startY = height-1;
-                var endX = 0;
-                var endY = 0;
-
-                context.beginPath();
-                lineColor = node.color;
-                context.strokeStyle = lineColor;
-                if (node.removed)
-                    startX = dataDrawingWidth * node.data.length;
-
-                for (var j = node.data.length-1; j > 0; j--) {
-                    var value = node.data[j];
-                    var adjustY = 0;
-                    if (j == node.data.length-1) {
-                        startY = getYPosition(value, graphHeight, adjustY);
-                    }
-
-                    for (var k = 0; k < nodeList.length; k++) {
-                        if (k != i && nodeList[k].data.length >= j && nodeList[k].data[j] == value) {
-                            adjustY = i * graphLineWidth * 2 + 1;
-                            break;
-                        }
-                    }
-
-                    endX = startX - dataDrawingWidth;
-                    endY = getYPosition(value, graphHeight, adjustY);
-
-                    if ((value < 0 && node.data[j-1] > 0) ||
-                            (value < 0 && j == 0) ||
-                            (j!= nodeList.length -1 &&value < 0 && node.data[j+1] > 0)) {
-
-                        context.moveTo(startX, startY);
-                        context.fillStyle = node.color;
-                        context.arc(startX, startY, dataDrawingWidth, 0, Math.PI * 2, true);
-                        context.fill();
-                    } else {
-                        context.moveTo(startX, startY);
-                        context.lineTo(endX, endY);
-                    }
-
-                    context.stroke();
-                    startX = endX;
-                    startY = endY;
-                }
-                context.closePath();
-
-            }
+            graph.drawBackground(context);
+            graph.drawGraphNode(context);
         }
-
-        function getYPosition(value, graphHeight, adjustY) {
-            var pos = 0;
-            if (value < 0)
-                value = value * -1;
-
-            pos = graphHeight - (graphHeight * (value / maxValue));
-
-            if (pos < 0)
-                pos = graphHeight;
-
-            pos = pos + ((height - graphHeight) / 2);
-            pos = pos + adjustY;
-
-            return pos
-        }
-
-        onPaint:{
-            drawBackground();
-            drawGraphNode();
-        }
-    }
-
-    Canvas {
-        id: node
-        width: parent.width
-        height: parent.height
-        anchors.fill: parent
     }
 
     Timer {
@@ -248,17 +140,16 @@ Rectangle {
         interval: parent.refreshInterval
         repeat: true
         onTriggered: {
-            Code.refreshGraphNode(graphName);
-            background.requestPaint();
+            canvas.refreshGraphNode();
+            canvas.requestPaint();
         }
     }
 
     Text {
-	text: "("+description+")"
-	font.pixelSize: parent.height / 30
-	anchors.bottom: parent.bottom
-	anchors.horizontalCenter: parent.horizontalCenter
-	anchors.bottomMargin: parent.height/14
-    }
+        text: "("+description+")"
+        font.pixelSize: parent.height / 30
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottomMargin: parent.height/14
+   }
 }
-
