@@ -16,6 +16,8 @@
 * PulseAudio
 * DBus
 * Qt5
+* Python
+* sqlite3
 
 ---
 ## Build Instruction for Ubuntu 14.04 PC
@@ -25,9 +27,9 @@
 
     $ git clone git://git.projects.genivi.org/AudioManager.git
     $ curl "http://git.projects.genivi.org/?p=meta-genivi-demo.git;a=blob_plain;f=recipes-multimedia/audiomanager/audiomanager/0001-Porting-Pulse-Routing-Interface-from-AM-v1.x-to-AM-v.patch;h=7d6ebbf710d0a0d46d99797f5ef6dd3712a888fe;hb=HEAD" > 0001-Porting-Pulse-Routing-Interface-from-AM-v1.x-to-AM-v.patch
-    $ curl "http://git.projects.genivi.org/?p=meta-genivi-demo.git;a=blob_plain;f=recipes-multimedia/audiomanager/audiomanager/0001-Porting-Pulse-Control-Interface-from-AM-v1.x-to-AM-v.patch;hb=HEAD" > 0001-Porting-Pulse-Control-Interface-from-AM-v1.x-to-AM-v.patch
+    $ curl "http://git.projects.genivi.org/?p=meta-genivi-demo.git;a=blob_plain;f=recipes-multimedia/audiomanager/audiomanager/0001-Porting-Pulse-Control-Interface-from-AM-v1.x-to-AM-v.patch;h=9a61d3c83cc5954bca1a0c644b3aec4aa94e8f5d;hb=HEAD" > 0001-Porting-Pulse-Control-Interface-from-AM-v1.x-to-AM-v.patch
     $ cd AudioManager
-    $ git checkout Intreprid_stable_branch
+    $ git checkout 6e700bfc7faecb6d7e0f31c9d08b8b4f6cd1b3dd
     $ patch -p1 < ../0001-Porting-Pulse-Routing-Interface-from-AM-v1.x-to-AM-v.patch
     $ patch -p1 < ../0001-Porting-Pulse-Control-Interface-from-AM-v1.x-to-AM-v.patch
     $ mkdir build
